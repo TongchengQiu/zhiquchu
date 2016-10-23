@@ -1,0 +1,5 @@
+build
+mock
+node_modules/**
+**/*.css
+**/*.html
