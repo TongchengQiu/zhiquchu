@@ -1,0 +1,23 @@
+.sidebar {
+  width: 180px;
+  background: #ccc;
+  text-align: center;
+  padding: 2rem 0;
+  li  {
+    display: block;
+    width: 100%;
+    line-height: 40px;
+    margin: .2rem 0;
+    a {
+      display: block;
+      color: #fff;
+      padding: 0 2.4rem;
+      &:hover {
+        background: #666;
+      }
+      &.active {
+        background: #5a5a5a;
+      }
+    }
+  }
+}

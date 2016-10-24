@@ -1,0 +1,35 @@
+.header {
+  height: 50px;
+  width: 100%;
+  line-height: 50px;
+  padding: 0 3rem;
+
+  .logo-box {
+    float: left;
+    font-size: 1.3rem;
+    font-weight: bold;
+    a {
+      padding: 0 1rem;
+      color: #333;
+    }
+  }
+
+  .action-box {
+    float: right;
+    .name {
+      font-size: 1.2rem;
+      margin-right: 1.4rem;
+    }
+    .actor {
+      font-size: .9rem;
+      margin-right: 1.4rem;
+    }
+    .logout {
+      font-size: .9rem;
+      margin-right: 1.4rem;
+      color: #438cbb;
+      cursor: pointer;
+      font-weight: bold;
+    }
+  }
+}

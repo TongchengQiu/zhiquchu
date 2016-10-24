@@ -53,3 +53,9 @@ npm run dev
 ```
 npm run build
 ```
+
+## Mock Server
+
+```
+npm run mock
+```
