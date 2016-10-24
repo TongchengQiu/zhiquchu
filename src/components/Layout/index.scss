@@ -23,4 +23,35 @@
     width: 100px;
     height: 100px;
   }
+
+  &.warming-up {
+    .transit-indicator {
+      display: block;
+    }
+  }
+
+  .transit-indicator {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 2px;
+    display: none;
+    z-index: 100000;
+    .transit-bar {
+      position: absolute;
+      background-color: #08f;
+      width: 100%;
+      height: 100%;
+      -webkit-animation:  indicateTransition 1s ease-in-out infinite;
+      -moz-animation:     indicateTransition 1s ease-in-out infinite;
+      -o-animation:       indicateTransition 1s ease-in-out infinite;
+      animation:          indicateTransition 1s ease-in-out infinite;
+    }
+  }
 }
+
+@-webkit-keyframes  indicateTransition { from { left:-100%; } to { left:100%; }  }
+@-moz-keyframes     indicateTransition { from { left:-100%; } to { left:100%; }  }
+@-o-keyframes       indicateTransition { from { left:-100%; } to { left:100%; }  }
+@keyframes          indicateTransition { from { left:-100%; } to { left:100%; }  }

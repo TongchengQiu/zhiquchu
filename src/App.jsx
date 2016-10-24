@@ -18,11 +18,9 @@ export default class App extends Component {
 
     return (
       <Provider store={store}>
-        <div style={{ height: '100%' }}>
-          <Router history={browserHistory}>
-            {routes}
-          </Router>
-        </div>
+        <Router history={browserHistory}>
+          {routes}
+        </Router>
       </Provider>
     );
   }

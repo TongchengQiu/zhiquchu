@@ -1,18 +1,25 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import { Link } from 'react-router';
 import './index.scss';
 
-const Sidebar = () => (
+const Sidebar = ({
+  list
+}) => (
   <div className='sidebar'>
     <ul>
-      <li><Link to='/home' activeClassName='active'>成员列表</Link></li>
-      <li><Link to='/active' activeClassName='active'>添加成员</Link></li>
+      {list.map((item, i) =>
+        <li key={`sidebar_item_${i}`}>
+          <Link to={item.path} activeClassName='active'>
+            {item.label}
+          </Link>
+        </li>
+      )}
     </ul>
   </div>
 );
 
-// Sidebar.propTypes = {
-//   children: PropTypes.any.isRequired,
-// };
+Sidebar.propTypes = {
+  list: PropTypes.array,
+};
 
 export default Sidebar;
