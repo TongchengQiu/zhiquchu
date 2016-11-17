@@ -1,6 +1,6 @@
 import { createReducer } from '../../store/reducers';
 
-const namespace = 'home';
+const namespace = 'users';
 const CHANGE_DATE = `${namespace}/CHANGE_DATE`;
 
 const initialState = {

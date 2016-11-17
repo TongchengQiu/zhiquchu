@@ -2,11 +2,12 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 
 @connect(state => ({
-  ...state.home
+  ...state.consumptions
 }))
-export default class Home extends Component {
+export default class Consumptions extends Component {
   static propTypes = {
     changeSidebarList: PropTypes.func,
+    children: PropTypes.any
   }
 
   constructor(props) {
@@ -17,17 +18,18 @@ export default class Home extends Component {
   componentWillMount() {
     this.props.changeSidebarList([
       {
-        path: '/home',
-        label: '哈哈哈'
+        path: '/consumptions/list',
+        label: '总体概览',
+        notOnlyIndex: true,
       },
       {
-        path: '/home/222',
-        label: '哈哈222哈'
+        path: '/consumptions/refund',
+        label: '退票管理'
       }
     ]);
   }
 
   render() {
-    return <div>123</div>;
+    return <div>{this.props.children}</div>;
   }
 }

@@ -6,7 +6,7 @@ const Navbar = () => (
   <nav className='navbar'>
     <ul className='clearfix'>
       <li>
-        <Link to='/home' activeClassName='active'>成员管理</Link>
+        <Link to='/members' activeClassName='active'>成员管理</Link>
       </li>
       <li>
         <Link to='/activitys' activeClassName='active'>活动管理</Link>

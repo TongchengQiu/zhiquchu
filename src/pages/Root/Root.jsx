@@ -4,8 +4,8 @@ import { changeSidebarList, startWarmup, doneWarmup } from './store';
 import Layout from '../../components/Layout';
 import Frame from './Frame';
 
-@connect(state => ({
-  pathname: state.location.pathname,
+@connect((state, props) => ({
+  pathname: props.location.pathname,
   sidebarList: state.root.sidebarList,
   warmingUp: state.root.warmingUp
 }), {
@@ -29,9 +29,12 @@ export default class Root extends Component {
 
   render() {
     const { children, pathname, sidebarList, warmingUp } = this.props;
+
+    const withoutFrame = (pathname === '/login' || pathname === 'login') ||
+                         (pathname === '/404' || pathname === '404');
     return (
       <Frame {...this.props}>
-        {(pathname === '/login' || pathname === 'login') ? children :
+        {withoutFrame ? children :
           <Layout
             sidebarList={sidebarList}
             warmingUp={warmingUp}

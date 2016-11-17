@@ -38,7 +38,9 @@ const buildRoutes = (routeNode, store) => {
     onEnter,
     getComponent,
     childRoutes,
-    indexRoute: routeNode.indexRoute
+    indexRoute: (typeof routeNode.indexRoute === 'function') ? {
+      getComponent: buildGetComponent(store, key, routeNode.indexRoute)
+    } : routeNode.indexRoute
   };
 };
 

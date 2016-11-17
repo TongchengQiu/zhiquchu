@@ -9,7 +9,11 @@ const Sidebar = ({
     <ul>
       {list.map((item, i) =>
         <li key={`sidebar_item_${i}`}>
-          <Link to={item.path} activeClassName='active'>
+          <Link
+            to={item.path}
+            activeClassName='active'
+            onlyActiveOnIndex={i === 0 && !item.notOnlyIndex}
+          >
             {item.label}
           </Link>
         </li>

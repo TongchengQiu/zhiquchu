@@ -1,4 +1,3 @@
-// see http://vuejs-templates.github.io/webpack for documentation.
 const path = require('path');
 
 module.exports = {
@@ -13,7 +12,7 @@ module.exports = {
     port: 8080,
     mockPort: 8888,
     proxyTable: {
-      '/api': 'localhost:8888'
+      '/api': 'http://wanmujia.com'
     }
   }
 };

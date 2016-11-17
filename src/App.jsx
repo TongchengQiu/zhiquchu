@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import { browserHistory, Router } from 'react-router';
+import { Router, hashHistory } from 'react-router';
 import { Provider } from 'react-redux';
 import './assets/style/base.scss';
 
@@ -18,7 +18,7 @@ export default class App extends Component {
 
     return (
       <Provider store={store}>
-        <Router history={browserHistory}>
+        <Router history={hashHistory}>
           {routes}
         </Router>
       </Provider>
