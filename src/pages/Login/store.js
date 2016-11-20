@@ -1,3 +1,4 @@
+import qs from 'qs';
 import { createReducer } from '../../store/reducers';
 import { multiDispatch, multiReducer } from '../../store/multi';
 import { post } from '../../utils/api';
@@ -16,7 +17,8 @@ const initialState = {
 export const login = (options) => {
   const url = apiLogin;
   return multiDispatch({
-    api: post(url, options),
+    api: post(url, qs.stringify(options))
+          .bind(null, { 'Content-Type': 'application/x-www-form-urlencoded' }),
     type: LOGIN,
     options
   });
