@@ -5,14 +5,15 @@ module.exports = {
     index: path.resolve(__dirname, 'dist/index.html'),
     assetsRoot: path.resolve(__dirname, 'dist'),
     assetsSubDirectory: 'static',
-    assetsPublicPath: '/',
+    assetsPublicPath: '/static/operapp/',
     productionSourceMap: false
   },
   dev: {
     port: 8080,
     mockPort: 8888,
     proxyTable: {
-      '/api': 'http://wanmujia.com'
+      // '/operapp': 'http://wanmujia.com',
+      '/operapp': 'localhost:8888',
     }
   }
 };

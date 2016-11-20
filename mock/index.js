@@ -11,10 +11,10 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 app.get('/', function (req, res) {
-  res.end('umefit mock data');
+  res.end('operapp mock data');
 });
 
-app.use('/api', api);
+app.use('/operapp', api);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
