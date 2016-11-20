@@ -1,6 +1,7 @@
 import 'whatwg-fetch';
+import { message } from 'antd';
 
-export const BASE_URL = '';
+export const BASE_URL = '/operapp';
 
 const DEFAULT_HEADERS = {
   Accept: 'application/json',
@@ -15,15 +16,45 @@ const buildHeaders = (headers, option) => (
   Object.assign({}, DEFAULT_HEADERS, headers, getDynamicHeaders(option))
 );
 
+const buildResult = (data) => {
+  const newData = Object.assign(data || {});
+  delete newData.retcode;
+  delete newData.retmsg;
+  const result = {};
+  if (!newData.data && !newData.page) {
+    result.data = {
+      ...newData
+    };
+  } else {
+    result.data = {
+      ...newData.data
+    };
+    if (newData.page) {
+      result.page = {
+        count: newData.page.count,
+        hasNext: newData.page.has_next,
+        hasPrevious: newData.page.has_previous,
+        pageSize: newData.page.page_size,
+        numPages: newData.page.num_pages,
+      };
+    }
+  }
+  return result;
+};
+
 const request = (qurl, config) => {
   const url = qurl[0] !== '/' ? `/${qurl}` : qurl;
   return fetch(`${BASE_URL}${url}`, config)
     .then(response => response.json())
     .then((json) => {
-      if (json.success) {
-        return json.result;
+      if (+json.retcode === 0) {
+        return buildResult(json);
       }
-      return Promise.reject(json);
+      message.error(json.retmsg || '出现错误！');
+      return Promise.reject({
+        ...json,
+        error: json.retmsg
+      });
     });
 };
 

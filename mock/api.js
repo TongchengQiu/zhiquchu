@@ -5,7 +5,7 @@ router.post('/login', (req, res) => {
   setTimeout(() => {
     res.json({
       retcode: 0,
-      retmsg: 'success'
+      retmsg: 'sucess'
     })
   }, 200);
 });

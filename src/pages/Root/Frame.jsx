@@ -39,6 +39,8 @@ export default class Frame extends Component {
   }
 
   render() {
-    return this.props.children;
+    return this.props.children && React.cloneElement(this.props.children, {
+      router: this.context.router
+    });
   }
 }

@@ -38,11 +38,13 @@ export default {
       path: 'members',
       module: Members,
       authRequire: true,
+      key: 'members',
       indexRoute: MembersList,
       childRoutes: [
         {
           path: 'new',
           module: MembersNew,
+          key: 'members',
           authRequire: true,
         }
       ]
@@ -52,20 +54,24 @@ export default {
       module: Activitys,
       authRequire: true,
       indexRoute: ActivitysOverview,
+      key: 'activitys',
       childRoutes: [
         {
           path: 'list',
           module: ActivitysList,
+          key: 'activitys',
           authRequire: true,
           childRoutes: [
             {
               path: ':id',
               module: ActivitysDetail,
+              key: 'activitys',
               authRequire: true,
               childRoutes: [
                 {
                   path: 'graphic',
                   module: ActivitysGraphic,
+                  key: 'activitys',
                   authRequire: true,
                 },
               ]
@@ -78,16 +84,19 @@ export default {
       path: 'users',
       module: Users,
       authRequire: true,
+      key: 'users',
       indexRoute: UsersOverview,
       childRoutes: [
         {
           path: 'list',
           module: UsersList,
           authRequire: true,
+          key: 'users',
           childRoutes: [
             {
               path: ':id',
               module: UsersDetail,
+              key: 'users',
               authRequire: true,
             },
           ]
@@ -98,6 +107,7 @@ export default {
       path: 'consumptions',
       module: Consumptions,
       authRequire: true,
+      key: 'consumptions',
       indexRoute: {
         onEnter: (nextState, replace) => (replace('/consumptions/list'))
       },
@@ -106,10 +116,12 @@ export default {
           path: 'list',
           module: ConsumptionsList,
           authRequire: true,
+          key: 'consumptions',
           childRoutes: [
             {
               path: ':id',
               module: ConsumptionsDetail,
+              key: 'consumptions',
               authRequire: true,
             },
           ]
@@ -117,6 +129,7 @@ export default {
         {
           path: 'refund',
           module: ConsumptionsRefund,
+          key: 'consumptions',
           authRequire: true,
         }
       ]

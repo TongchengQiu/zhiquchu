@@ -1,15 +1,16 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { changeSidebarList, startWarmup, doneWarmup } from './store';
+import { changeSidebarList, auth, logout, startWarmup, doneWarmup } from './store';
 import Layout from '../../components/Layout';
 import Frame from './Frame';
 
 @connect((state, props) => ({
   pathname: props.location.pathname,
-  sidebarList: state.root.sidebarList,
-  warmingUp: state.root.warmingUp
+  ...state.root,
 }), {
   changeSidebarList,
+  auth,
+  logout,
   startWarmup,
   doneWarmup
 })
@@ -20,6 +21,10 @@ export default class Root extends Component {
     sidebarList: PropTypes.array,
     changeSidebarList: PropTypes.func,
     warmingUp: PropTypes.bool,
+    userInfo: PropTypes.any,
+    auth: PropTypes.any,
+    logout: PropTypes.any,
+    authError: PropTypes.any,
   }
 
   constructor(props) {
@@ -27,19 +32,46 @@ export default class Root extends Component {
     this.state = {};
   }
 
+  componentDidMount() {
+    if (this.props.pathname !== '/login') {
+      this.props.auth();
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (
+      prevProps.pathname !== this.props.pathname &&
+      this.props.pathname !== '/login' &&
+      !this.props.userInfo
+    ) {
+      this.props.auth();
+    }
+
+    if (!prevProps.authError && this.props.authError) {
+      this.logout();
+    }
+  }
+
+  logout() {
+    this.props.logout();
+    this.frame.context.router.replace('/login');
+  }
+
   render() {
-    const { children, pathname, sidebarList, warmingUp } = this.props;
+    const { children, pathname, sidebarList, warmingUp, userInfo } = this.props;
 
     const withoutFrame = (pathname === '/login' || pathname === 'login') ||
                          (pathname === '/404' || pathname === '404');
     return (
-      <Frame {...this.props}>
+      <Frame {...this.props} ref={(frame) => { this.frame = frame; }}>
         {withoutFrame ? children :
           <Layout
             sidebarList={sidebarList}
             warmingUp={warmingUp}
+            logout={::this.logout}
+            userInfo={userInfo}
           >
-            {children && React.cloneElement(this.props.children, {
+            {children && React.cloneElement(children, {
               changeSidebarList: this.props.changeSidebarList,
             })}
           </Layout>}

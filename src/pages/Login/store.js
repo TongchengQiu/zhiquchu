@@ -1,11 +1,11 @@
 import { createReducer } from '../../store/reducers';
-import { multiDispatch } from '../../store/multi';
+import { multiDispatch, multiReducer } from '../../store/multi';
 import { post } from '../../utils/api';
 
 const namespace = 'login';
-const LOGIN_STARTING = `${namespace}/LOGIN_STARTING`;
-const LOGIN_DONE = `${namespace}/LOGIN_DONE`;
-const LOGIN_FAILED = `${namespace}/LOGIN_FAILED`;
+const LOGIN = `${namespace}/LOGIN`;
+
+const apiLogin = '/login';
 
 const initialState = {
   loginStarting: false,
@@ -14,28 +14,30 @@ const initialState = {
 };
 
 export const login = (options) => {
-  const url = '/login';
+  const url = apiLogin;
   return multiDispatch({
     api: post(url, options),
-    types: [LOGIN_STARTING, LOGIN_DONE, LOGIN_FAILED],
+    type: LOGIN,
     options
   });
 };
 
 export default createReducer(initialState, {
-  [LOGIN_STARTING]: (state, action) => ({
-    ...state,
-    loginError: null,
-    loginStarting: true,
-  }),
-  [LOGIN_DONE]: (state, action) => ({
-    ...state,
-    loginStarting: false,
-    loginDone: true
-  }),
-  [LOGIN_FAILED]: (state, action) => ({
-    ...state,
-    loginStarting: false,
-    loginError: action.error,
-  }),
+  [LOGIN]: (state, action) => multiReducer(action,
+    () => ({
+      ...state,
+      loginStarting: true,
+      loginError: null,
+    }),
+    () => ({
+      ...state,
+      loginStarting: false,
+      loginDone: true
+    }),
+    () => ({
+      ...state,
+      loginStarting: false,
+      loginError: action.error,
+    })
+  ),
 });

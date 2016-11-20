@@ -9,11 +9,11 @@ module.exports = {
     productionSourceMap: false
   },
   dev: {
-    port: 8080,
+    port: 8001,
     mockPort: 8888,
     proxyTable: {
       // '/operapp': 'http://wanmujia.com',
-      '/operapp': 'localhost:8888',
+      '/operapp': 'http://localhost:8888',
     }
   }
 };

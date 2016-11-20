@@ -14,16 +14,27 @@ const createForm = Form.create;
 })
 class Login extends Component {
   static propTypes = {
+    router: PropTypes.any,
     form: PropTypes.any,
     loginStarting: PropTypes.bool,
-    // loginDone: PropTypes.bool,
-    // loginError: PropTypes.string,
-    login: PropTypes.any,
+    loginDone: PropTypes.bool,
+    login: PropTypes.func,
+  }
+
+  static contextTypes = {
+    router: PropTypes.object.isRequired,
+    store: PropTypes.object.isRequired,
   }
 
   constructor(props) {
     super(props);
     this.state = {};
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.loginStarting && !this.props.loginStarting && this.props.loginDone) {
+      this.props.router.replace('/');
+    }
   }
 
   handleSubmit(e) {
@@ -35,7 +46,10 @@ class Login extends Component {
       if (errors) {
         return;
       }
-      this.props.login(values);
+      this.props.login({
+        username: values.account,
+        password: values.password,
+      });
     });
   }
 
@@ -79,7 +93,7 @@ class Login extends Component {
               <Input type='password' placeholder='请输入密码' />
             )}
           </FormItem>
-          <Row style={{ paddingLeft: '1%' }}>
+          {/* <Row style={{ paddingLeft: '1%' }}>
             <Col span={14}>
               <FormItem
                 labelCol={{ span: 10 }}
@@ -101,7 +115,7 @@ class Login extends Component {
                 验证码
               </div>
             </Col>
-          </Row>
+          </Row> */}
           <FormItem
             wrapperCol={{ span: 14, offset: 6 }}
             className='btn-submit-wrap'

@@ -7,13 +7,15 @@ import Sidebar from '../Sidebar';
 const Layout = ({
   children,
   sidebarList,
-  warmingUp
+  warmingUp,
+  logout,
+  userInfo
 }) => (
   <div className={`layout${warmingUp ? ' warming-up' : ''}`}>
     <div className='transit-indicator'>
       <div className='transit-bar' />
     </div>
-    <Header username='呼呼呼' />
+    <Header userInfo={userInfo} logout={logout} />
     <Navbar />
     <Sidebar list={sidebarList} />
     <div className='container'>
@@ -25,6 +27,8 @@ const Layout = ({
 Layout.propTypes = {
   children: PropTypes.any.isRequired,
   sidebarList: PropTypes.array,
+  logout: PropTypes.func,
+  userInfo: PropTypes.any,
   warmingUp: PropTypes.bool
 };
 
