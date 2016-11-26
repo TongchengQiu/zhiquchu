@@ -11,7 +11,8 @@ module.exports = merge(baseWebpackConfig, {
   output: {
     path: config.build.assetsRoot,
     filename: path.join(config.build.assetsSubDirectory, '[name].[chunkhash:4].js'),
-    chunkFilename: path.join(config.build.assetsSubDirectory, 'chunk[id].[chunkhash:4].js')
+    chunkFilename: path.join(config.build.assetsSubDirectory, 'chunk[id].[chunkhash:4].js'),
+    publicPath: config.build.assetsPublicPath
   },
   module: {
     loaders: [
