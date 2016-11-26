@@ -386,7 +386,7 @@ router.get('/capital/daystat', (req, res) => {
         }
       },
     })
-  }, 200);
+  }, 2020);
 });
 
 router.get('/order/qrys', (req, res) => {
@@ -421,7 +421,8 @@ router.get('/order/qrys', (req, res) => {
     })
   }, 200);
 });
-router.get('/operapp/refund/qrys', (req, res) => {
+
+router.get('/refund/qrys', (req, res) => {
   setTimeout(() => {
     res.json({
       retcode: 0,
