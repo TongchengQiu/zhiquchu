@@ -16,7 +16,7 @@ module.exports = {
   },
   output: {
     path: config.build.assetsRoot,
-    publicPath: config.build.assetsPublicPath,
+    publicPath: '/',
     filename: '[name].[hash].js'
   },
   resolve: {

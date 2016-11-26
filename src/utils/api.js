@@ -29,14 +29,15 @@ const buildResult = (data) => {
     result.data = {
       ...newData.data
     };
-    if (newData.page) {
+    if (newData.data && newData.data.page) {
       result.page = {
-        count: newData.page.count,
-        hasNext: newData.page.has_next,
-        hasPrevious: newData.page.has_previous,
-        pageSize: newData.page.page_size,
-        numPages: newData.page.num_pages,
+        count: newData.data.page.count,
+        hasNext: newData.data.page.has_next,
+        hasPrevious: newData.data.page.has_previous,
+        pageSize: newData.data.page.page_size,
+        pageNumber: newData.data.page.page_number,
       };
+      result.data = newData.data.data;
     }
   }
   return result;

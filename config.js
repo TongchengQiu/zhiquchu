@@ -12,8 +12,8 @@ module.exports = {
     port: 8001,
     mockPort: 8888,
     proxyTable: {
-      '/operapp': 'http://wanmujia.com',
-      // '/operapp': 'http://localhost:8888',
+      // '/operapp': 'http://wanmujia.com',
+      '/operapp': 'http://localhost:8888',
     }
   }
 };

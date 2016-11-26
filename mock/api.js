@@ -44,6 +44,7 @@ router.post('/adduser', (req, res) => {
 });
 
 router.get('/qryusers', (req, res) => {
+  console.log(req.query);
   setTimeout(() => {
     res.json({
       retcode: 0,
@@ -67,7 +68,7 @@ router.get('/qryusers', (req, res) => {
           num_pages: 1,
           next_page_number: 2,
           page_size: 10,
-          page_number: 1,
+          page_number: req.query.page,
           has_previous: true,
           previous_page_number: 0
         }
