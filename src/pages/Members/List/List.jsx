@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { Button } from 'antd';
+import { Button, Popconfirm } from 'antd';
 import Table from '../../../components/Table';
 import { getList, deleteItem } from '../store';
 
@@ -39,7 +39,16 @@ export default class List extends Component {
     }, {
       title: '操作',
       key: 'OPTIONS',
-      render: (text, record) => (<Button onClick={() => this.props.deleteItem(record.id)}>删除</Button>)
+      render: (text, record) => (
+        <Popconfirm
+          onConfirm={() => this.props.deleteItem(record.id)}
+          okText='确定'
+          cancelText='取消'
+          title={`确定删除${record.nickname}吗`}
+        >
+          <Button>删除</Button>
+        </Popconfirm>
+      )
     }];
     return {
       getList: this.props.getList,

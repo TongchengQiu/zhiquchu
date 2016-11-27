@@ -11,6 +11,7 @@ const LOGOUT = `${namespace}/LOGOUT`;
 const AUTH = `${namespace}/AUTH`;
 
 const apiAuth = '/userinfo';
+const apiLogout = '/logout';
 
 export const auth = (options) => {
   const url = apiAuth;
@@ -47,11 +48,14 @@ export const errorFunc = error => (dispatch) => {
   });
 };
 
-export function logout() {
-  return {
-    type: LOGOUT
-  };
-}
+export const logout = (options) => {
+  const url = apiLogout;
+  return multiDispatch({
+    api: get(url, options),
+    type: LOGOUT,
+    options
+  });
+};
 
 const initialState = {
   warmingUp: false,
@@ -74,10 +78,18 @@ export default createReducer(initialState, {
     ...state,
     globalError: action.error
   }),
-  [LOGOUT]: (state, action) => ({
-    ...state,
-    userInfo: null
-  }),
+  [LOGOUT]: (state, action) => multiReducer(action,
+    () => ({
+      ...state,
+      userInfo: null
+    }),
+    () => ({
+      ...state,
+    }),
+    () => ({
+      ...state,
+    })
+  ),
   [AUTH]: (state, action) => multiReducer(action,
     () => ({
       ...state,

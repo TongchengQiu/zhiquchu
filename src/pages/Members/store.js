@@ -1,3 +1,4 @@
+import qs from 'qs';
 import { createReducer } from '../../store/reducers';
 import { multiDispatch, multiReducer } from '../../store/multi';
 import { get, post } from '../../utils/api';
@@ -50,7 +51,8 @@ export const deleteItem = (id) => {
 export const createItem = (options) => {
   const url = apiMemberCreateApi;
   return multiDispatch({
-    api: post(url, options),
+    api: post(url, qs.stringify(options))
+          .bind(null, { 'Content-Type': 'application/x-www-form-urlencoded' }),
     type: CREATE,
     options
   });
