@@ -10,7 +10,7 @@ const GLOBAL_ERROR = `${namespace}/GLOBAL_ERROR`;
 const LOGOUT = `${namespace}/LOGOUT`;
 const AUTH = `${namespace}/AUTH`;
 
-const apiAuth = '/auth';
+const apiAuth = '/userinfo';
 
 export const auth = (options) => {
   const url = apiAuth;

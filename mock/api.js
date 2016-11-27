@@ -19,7 +19,7 @@ router.get('/logout', (req, res) => {
   }, 200);
 });
 
-router.get('/auth', (req, res) => {
+router.get('/userinfo', (req, res) => {
   setTimeout(() => {
     res.json({
       retcode: 0,

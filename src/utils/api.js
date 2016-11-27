@@ -45,7 +45,9 @@ const buildResult = (data) => {
 
 const request = (qurl, config) => {
   const url = qurl[0] !== '/' ? `/${qurl}` : qurl;
-  return fetch(`${BASE_URL}${url}`, config)
+  const newConf = config;
+  newConf.credentials = 'include';
+  return fetch(`${BASE_URL}${url}`, newConf)
     .then(response => response.json())
     .then((json) => {
       if (+json.retcode === 0) {

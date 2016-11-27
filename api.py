@@ -53,7 +53,7 @@ def login(request):
 
         username = request.REQUEST.get("username", "")
         password = request.REQUEST.get("password", "")
-
+        logger.debug("login:username=" + username + ",password=" + password)
         request_user = auth.authenticate(username=username, password=password)
 
         if request_user is not None :
@@ -76,7 +76,7 @@ def logout(request):
         auth.logout(request)
 
 # 运营端登录用户信息
-# api_url: http://wanmujia.com/operapp/auth
+# api_url: http://wanmujia.com/operapp/userinfo
 # method ：get
 # 返回为json格式
 # out    ：retcode       #错误码
@@ -84,8 +84,9 @@ def logout(request):
 #        ：id            #用户ID
 #        ：nickname      #姓名
 #        ：username      #用户名
+@check_admin_login
 @json_response
-def auth(request):
+def userinfo(request):
     if request.user.is_authenticated():
         info_map = {}
         info_map['id'] = request.user.id
@@ -749,6 +750,7 @@ def order_qrys(request):
 # in     ：page          #页数，从1开始
 #        ：page_size     #默认10，可以不填
 #        : date          #年-月-日
+#        : state         #0:申请 1:同意 2:拒绝 3:成功 4:失败
 # 返回为json格式
 # out    ：retcode       #错误码
 #        ：retmsg        #错误描述
@@ -783,6 +785,10 @@ def refund_qrys(request):
 
     refunds = Refund.objects.filter(create_time__gte=start_time)
     refunds = refunds.filter(create_time__lte=end_time)
+
+    state = int( request.REQUEST.get("state", "9"))
+    if state != 9:
+        refunds = refunds.filter(state=state)
 
     info_map = {}
     page = get_page_of_paged_objects(request, refunds)
@@ -829,7 +835,43 @@ def refund_check(request):
             refund.state = 2
             refund.save()
         else:
+
             #进入退款流程
-            pass
+            indict = dict()
+            indict["device_info"] = str(refund.id)
+            indict["transaction_id"] = refund.transaction_id
+            indict["out_trade_no"] = refund.coding
+            indict["out_refund_no"] = refund.mch_refund_id
+            indict["total_fee"] = str(refund.fee_price)
+            indict["refund_fee"] = str(refund.price)
+            indict["refund_fee_type"] = 'CNY'
+
+            order = Order.objects.get(coding=refund.coding)
+            client = WxScanPayClient()
+            (ret, errmsg, retdict) = client.refund(indict)
+            logger.error(errmsg)
+
+            if ret == ERR_CODE_WX_SUCCESS:
+                # 退款成功
+                refund.state = 3
+                refund.weixin_refund_id = retdict["refund_id"]
+                refund.refund_time = datetime.datetime.now()
+                refund.save()
+
+
+                order.state = 4
+                order.save()
+
+                apply = Apply.objects.get(order_id=order.id)
+                apply.state = 0
+                apply.save()
+            else:
+                # 退款失败
+                refund.state = 4
+                refund.create_error = u'创建退款单失败: ' + errmsg
+                refund.save()
+
+                raise AppException(200000, refund.create_error)
+
     except:
         raise AppException(APP_ERROR_PARAM_VALUE, u"id不存在")
