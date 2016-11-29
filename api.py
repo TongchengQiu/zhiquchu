@@ -30,6 +30,8 @@ logger = logging.getLogger('app')
 
 # 运营端首页
 def index(request):
+    logger.debug(str(request.REQUEST))
+
     return HttpResponseRedirect("/static/operapp/index.html")
 
 # 运营端登录
@@ -44,7 +46,7 @@ def index(request):
 @require_POST
 @json_response
 def login(request):
-    logger.debug("login:" + str(request.REQUEST))
+    logger.debug(str(request.REQUEST))
 
     if request.user.is_authenticated():
         logger.debug("logged in:" +  str(request.COOKIES))
@@ -71,6 +73,8 @@ def login(request):
 #        ：retmsg        #错误描述
 @json_response
 def logout(request):
+    logger.debug(str(request.REQUEST))
+
     if request.user.is_authenticated():
         logger.info("logging out : " + request.user.username)
         auth.logout(request)
@@ -87,6 +91,8 @@ def logout(request):
 @check_admin_login
 @json_response
 def userinfo(request):
+    logger.debug(str(request.REQUEST))
+
     if request.user.is_authenticated():
         info_map = {}
         info_map['id'] = request.user.id
@@ -112,7 +118,7 @@ def userinfo(request):
 @check_admin_login
 @json_response
 def adduser(request):
-    logger.debug("adduser:" + str(request.REQUEST))
+    logger.debug(str(request.REQUEST))
 
     username = request.REQUEST.get("username", "")
     password = request.REQUEST.get("password", "")
@@ -152,7 +158,7 @@ def adduser(request):
 @check_admin_login
 @json_response
 def qryusers(request):
-    logger.debug("qryusers:" + str(request.REQUEST))
+    logger.debug(str(request.REQUEST))
 
     info_map = {}
     users = User.objects.filter(last_name='1')
@@ -189,6 +195,8 @@ def deluser(request):
 
     try:
         user = User.objects.get(id=id)
+        if user.username == 'admin':
+            raise AppException(APP_ERROR_PARAM_VALUE, u"admin不能删除")
         user.delete()
     except:
         raise AppException(APP_ERROR_PARAM_VALUE, u"id不存在")
@@ -209,6 +217,8 @@ def deluser(request):
 @check_admin_login
 @json_response
 def activity_stat(request):
+    logger.debug(str(request.REQUEST))
+
     stat = ActivityStat.objects.get(id=1)
     fields = ["sum", "via", 'checking', 'disable', 'valid', 'overdue']
     info_map = obj_to_map(stat, fields)
@@ -439,11 +449,9 @@ def activity_qry(request):
 # method ：get
 # in     ：page          #页数，从1开始
 #        ：page_size     #默认10，可以不填
-#        : state         #状态 0:待付款 1:待参与，支付成功 2：已经参加完成。
+#        : state         #状态 0:待付款 1:待参与，支付成功 2：已经参加完成。3.退票中 4.退票成功 5.退票失败 （可选）
+#        : parter_id     #参加用户的id（可选）
 #        : id            #活动ID
-#
-#        ：parter_id     #参加活动者ID
-#        ：favorite      #是否收藏 0 ， 1，
 # 返回为json格式
 # out    ：retcode       #错误码
 #        ：retmsg        #错误描述
@@ -468,6 +476,7 @@ def activity_qry(request):
 #        ：state         #状态 0:待付款 1:待参与，支付成功 2：已经参加完成。
 #        ：favorite_time #收藏时间
 #        ：nickname      #微信昵称
+#        ：weixinuser_id #微信id
 @check_admin_login
 @json_response
 def apply_qrys(request):
@@ -478,31 +487,108 @@ def apply_qrys(request):
                 [
                  ("id","0"),
                  ("state","9"),
-                 ("parter_id", "0"),
-                 ("favorite_id", "0"),
+                 ("parter_id","0"),
                 ])
     applys = Apply.objects.all()
     id = int(params["id"])
     if id:
         applys = applys.filter(activity_id=id)
 
-    state = int(params["state"])
-    if state >= 0 and state <= 2:
-        applys = applys.filter(state=state)
-
-    favorite = int(params["favorite"])
-    if favorite >= 0 and favorite <= 1:
-        applys = applys.filter(favorite=favorite)
-
     parter_id = int(params["parter_id"])
     if parter_id:
         applys = applys.filter(weixinuser_id=parter_id)
+
+    state = int(params["state"])
+    if state >= 0 and state <= 2:
+        applys = applys.filter(state=state)
 
     info_map = {}
     page = get_page_of_paged_objects(request, applys)
     info_map["page"] = page.to_map()
 
-    fields = ["activity_id", "activity_name", "link_name", "link_phone", "fee_name", "fee_price", "apply_time", "modify_time", "state", "favorite_time", "nickname"]
+    fields = ["activity.id", "activity_name", "link_name", "link_phone", "fee_name", "fee_price", "apply_time", "modify_time", "state", "favorite_time", "nickname", "weixinuser.id"]
+    map_list = objs_to_map_list(page.objects, fields)
+    logger.debug(map_list)
+    info_map["data"] = map_list
+
+    return info_map
+
+# 活动收藏用户
+# api_url: http://wanmujia.com/operapp/activity/favorite
+# method ：get
+# in     ：page          #页数，从1开始
+#        ：page_size     #默认10，可以不填
+#        : id            #活动ID
+# 返回为json格式
+# out    ：retcode       #错误码
+#        ：retmsg        #错误描述
+#          分页数据
+#        ：count         #条数
+#        ：page_size     #单页页数
+#        ：num_pages     #页数
+#        ：page_number   #页码
+#        ：has_next      #是否有下一页
+#        ：next_page_number #下页页数
+#        ：has_previous  #是否有上一页
+#        ：previous_page_number #上一页页数
+#          单项数据
+#        ：create_time              #收藏时间
+#        ：weixinuser_nickname      #微信昵称
+#        ：weixinuser_id            #微信昵称
+@check_admin_login
+@json_response
+def activity_favorite(request):
+    logger.debug(str(request.REQUEST))
+
+    id = request.REQUEST.get("id", "0")
+    datas =  Favorite.objects.filter(activity_id=id)
+
+    info_map = {}
+    page = get_page_of_paged_objects(request, datas)
+    info_map["page"] = page.to_map()
+
+    fields = ["weixinuser.nickname", "create_time", "weixinuser.id"]
+    map_list = objs_to_map_list(page.objects, fields)
+    logger.debug(map_list)
+    info_map["data"] = map_list
+
+    return info_map
+
+# 微信用户收藏活动
+# api_url: http://wanmujia.com/operapp/wechat/favorite
+# method ：get
+# in     ：page          #页数，从1开始
+#        ：page_size     #默认10，可以不填
+#        : id            #用户ID
+# 返回为json格式
+# out    ：retcode       #错误码
+#        ：retmsg        #错误描述
+#          分页数据
+#        ：count         #条数
+#        ：page_size     #单页页数
+#        ：num_pages     #页数
+#        ：page_number   #页码
+#        ：has_next      #是否有下一页
+#        ：next_page_number #下页页数
+#        ：has_previous  #是否有上一页
+#        ：previous_page_number #上一页页数
+#          单项数据
+#        ：activity_id              #活动id
+#        ：activity_name            #活动活动名
+#        ：create_time              #收藏时间
+@check_admin_login
+@json_response
+def wechat_favorite(request):
+    logger.debug(str(request.REQUEST))
+
+    id = request.REQUEST.get("id", "0")
+    datas =  Favorite.objects.filter(weixinuser_id=id)
+
+    info_map = {}
+    page = get_page_of_paged_objects(request, datas)
+    info_map["page"] = page.to_map()
+
+    fields = ["activity.name", "create_time", "activity.id"]
     map_list = objs_to_map_list(page.objects, fields)
     logger.debug(map_list)
     info_map["data"] = map_list
@@ -520,6 +606,7 @@ def apply_qrys(request):
 @check_admin_login
 @json_response
 def wechat_stat(request):
+    logger.debug(str(request.REQUEST))
     stat = WeChatStat.objects.get(id=1)
     fields = ["sum", "disable", 'valid']
     info_map = obj_to_map(stat, fields)
@@ -622,6 +709,8 @@ def wechat_qrys(request):
 @check_admin_login
 @json_response
 def wechat_qry(request):
+    logger.debug(str(request.REQUEST))
+
     id = request.REQUEST.get("id", "0")
     id = int(id)
     if not id:
@@ -648,6 +737,8 @@ def wechat_qry(request):
 @check_admin_login
 @json_response
 def capital_stat(request):
+    logger.debug(str(request.REQUEST))
+
     stat = CapitalStat.objects.get(id=1)
     fields = ["pay_fee", "refund_fee", 'balance_fee']
     info_map = obj_to_map(stat, fields)
@@ -700,6 +791,7 @@ def capital_daystat(request):
 # in     ：page          #页数，从1开始
 #        ：page_size     #默认10，可以不填
 #        : date          #年-月-日 2016-11-01
+#        ：weixinuser_id #用户用户id (选填)
 # 返回为json格式
 # out    ：retcode       #错误码
 #        ：retmsg        #错误描述
@@ -718,6 +810,7 @@ def capital_daystat(request):
 #        ：activity_name #活动名
 #        ：fee_name      #票种名称
 #        ：fee_price     #票种价格
+#        ：weixinuser_id #微信用户id
 @check_admin_login
 @json_response
 def order_qrys(request):
@@ -733,11 +826,15 @@ def order_qrys(request):
     orders = Order.objects.filter(create_time__gte=start_time)
     orders = orders.filter(create_time__lte=end_time)
 
+    weixinuser_id = int(request.REQUEST.get("weixinuser_id", "0"))
+    if weixinuser_id:
+        orders = orders.filter(weixinuser_id=weixinuser_id)
+
     info_map = {}
     page = get_page_of_paged_objects(request, orders)
     info_map["page"] = page.to_map()
 
-    fields = ["activity_id", "nickname", "activity_name", "fee_name", "fee_price"]
+    fields = ["activity.id", "nickname", "activity_name", "fee_name", "fee_price", "weixinuser.id"]
     map_list = objs_to_map_list(page.objects, fields)
     logger.debug(map_list)
     info_map["data"] = map_list
@@ -749,8 +846,10 @@ def order_qrys(request):
 # method ：get
 # in     ：page          #页数，从1开始
 #        ：page_size     #默认10，可以不填
-#        : date          #年-月-日
+#        : date          #年-月-日 (可选)
 #        : state         #0:申请 1:同意 2:拒绝 3:成功 4:失败
+#        ：weixinuser_id #用户用户id (选填)
+#        ：activity_id   #活动id (选填)
 # 返回为json格式
 # out    ：retcode       #错误码
 #        ：retmsg        #错误描述
@@ -776,15 +875,25 @@ def order_qrys(request):
 def refund_qrys(request):
     logger.debug(str(request.REQUEST))
 
+    refunds = Refund.objects.all()
+
     date = request.REQUEST.get("date", "0")
     if date == "0":
-        raise AppException(APP_ERROR_PARAM_VALUE, u"date必填")
+        pass
+    else:
+        start_time = start_time_of_day(date)
+        end_time = end_time_of_day(date)
 
-    start_time = start_time_of_day(date)
-    end_time = end_time_of_day(date)
+        refunds = refunds.filter(create_time__gte=start_time)
+        refunds = refunds.filter(create_time__lte=end_time)
 
-    refunds = Refund.objects.filter(create_time__gte=start_time)
-    refunds = refunds.filter(create_time__lte=end_time)
+    weixinuser_id = int(request.REQUEST.get("weixinuser_id", "0"))
+    if weixinuser_id:
+        refunds = refunds.filter(weixinuser_id=weixinuser_id)
+
+    activity_id = int(request.REQUEST.get("activity_id", "0"))
+    if activity_id:
+        refunds = refunds.filter(activity_id=activity_id)
 
     state = int( request.REQUEST.get("state", "9"))
     if state != 9:
@@ -794,7 +903,7 @@ def refund_qrys(request):
     page = get_page_of_paged_objects(request, refunds)
     info_map["page"] = page.to_map()
 
-    fields = ["activity_id", "weixinuser_id", "nickname", "activity_name", "fee_name", "fee_price", "state"]
+    fields = ["activity.id", "weixinuser.id", "nickname", "activity_name", "fee_name", "fee_price", "state"]
     map_list = objs_to_map_list(page.objects, fields)
     logger.debug(map_list)
 
@@ -832,10 +941,11 @@ def refund_check(request):
     try:
         refund = Refund.objects.get(id = id)
         if state == 2:
+            # @_@ 状态变化
             refund.state = 2
             refund.save()
         else:
-
+            # @_@ 状态变化
             #进入退款流程
             indict = dict()
             indict["device_info"] = str(refund.id)
