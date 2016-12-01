@@ -16,6 +16,7 @@ import Users from './Users';
 import UsersList from './Users/List';
 import UsersDetail from './Users/Detail';
 import UsersOverview from './Users/Overview';
+import UsersConsume from './Users/Consume';
 
 import Consumptions from './Consumptions';
 import ConsumptionsList from './Consumptions/List';
@@ -98,6 +99,14 @@ export default {
               module: UsersDetail,
               key: 'users',
               authRequire: true,
+              childRoutes: [
+                {
+                  path: 'consume',
+                  module: UsersConsume,
+                  key: 'users',
+                  authRequire: true,
+                }
+              ]
             },
           ]
         },

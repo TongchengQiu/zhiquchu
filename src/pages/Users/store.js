@@ -12,6 +12,9 @@ const GET_USER_PUBLISH_LIST = `${namespace}GET_USER_PUBLISH_LIST`;
 const GET_USER_PART_LIST = `${namespace}GET_USER_PART_LIST`;
 const GET_USER_FAVO_LIST = `${namespace}GET_USER_FAVO_LIST`;
 
+const GET_PAY_LIST = `${namespace}GET_PAY_LIST`;
+const GET_REFUND_LIST = `${namespace}GET_REFUND_LIST`;
+
 const getStatApi = '/wechat/stat';
 const getStatListApi = '/wechat/daystat';
 const getUserListApi = '/wechat/qrys';
@@ -19,6 +22,9 @@ const getUserDetailApi = '/wechat/qry';
 const getUserPublishApi = '/activity/qrys'; // publisher_id
 const getUserPartApi = '/apply/qrys'; // parter_id
 const getUserFavoApi = '/wechat/favorite';
+
+const getPayApi = '/order/qrys';
+const getRefundApi = '/refund/qrys';
 
 export const getAllStat = () => {
   const url = getStatApi;
@@ -73,6 +79,24 @@ export const getUserPartList = (options) => {
   });
 };
 
+export const getPayList = (options) => {
+  const url = getPayApi;
+  return multiDispatch({
+    api: get(url, options),
+    type: GET_PAY_LIST,
+    options
+  });
+};
+
+export const getRefundList = (options) => {
+  const url = getRefundApi;
+  return multiDispatch({
+    api: get(url, options),
+    type: GET_REFUND_LIST,
+    options
+  });
+};
+
 export const getUserFavoList = (options) => {
   const url = getUserFavoApi;
   return multiDispatch({
@@ -119,6 +143,18 @@ const initialState = {
   getUserFavoListError: null,
   userFavoList: [],
   userFavoPage: {},
+
+  getPayListStarting: false,
+  getPayListDone: false,
+  getPayListError: null,
+  payList: [],
+  payPage: {},
+
+  getRefundStarting: false,
+  getRefundDone: false,
+  getRefundError: null,
+  refundList: [],
+  refundPage: {},
 };
 
 export default createReducer(initialState, {
@@ -248,6 +284,46 @@ export default createReducer(initialState, {
       ...state,
       getUserFavoListError: action.error,
       getUserFavoListStarting: false,
+    })
+  ),
+
+  [GET_PAY_LIST]: (state, action) => multiReducer(action,
+    () => ({
+      ...state,
+      getPayListStarting: true,
+      getPayListError: null,
+    }),
+    () => ({
+      ...state,
+      getPayListStarting: false,
+      getPayListDone: true,
+      payList: action.result.data,
+      payPage: action.result.page
+    }),
+    () => ({
+      ...state,
+      getPayListError: action.error,
+      getPayListStarting: false,
+    })
+  ),
+
+  [GET_REFUND_LIST]: (state, action) => multiReducer(action,
+    () => ({
+      ...state,
+      getRefundListStarting: true,
+      getRefundListError: null,
+    }),
+    () => ({
+      ...state,
+      getRefundListStarting: false,
+      getRefundListDone: true,
+      refundList: action.result.data,
+      refundPage: action.result.page
+    }),
+    () => ({
+      ...state,
+      getRefundListError: action.error,
+      getRefundListStarting: false,
     })
   ),
 });
