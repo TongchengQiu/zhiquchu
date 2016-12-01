@@ -193,6 +193,8 @@ def deluser(request):
     if not id:
         raise AppException(APP_ERROR_PARAM_VALUE, u"id必填")
 
+    logger.debug(str(id))
+
     try:
         user = User.objects.get(id=id)
         if user.username == 'admin':
@@ -863,6 +865,7 @@ def order_qrys(request):
 #        ：has_previous  #是否有上一页
 #        ：previous_page_number #上一页页数
 #          单项数据
+#          id            #退款但ID
 #        ：activity_id   #活动ID
 #        ：weixinuser_id #用户ID
 #        ：nickname      #昵称
@@ -903,7 +906,9 @@ def refund_qrys(request):
     page = get_page_of_paged_objects(request, refunds)
     info_map["page"] = page.to_map()
 
-    fields = ["activity.id", "weixinuser.id", "nickname", "activity_name", "fee_name", "fee_price", "state"]
+
+    fields = ["id", "activity_id", "weixinuser_id", "nickname", "activity_name", "fee_name", "fee_price", "state"]
+
     map_list = objs_to_map_list(page.objects, fields)
     logger.debug(map_list)
 
@@ -953,7 +958,7 @@ def refund_check(request):
             indict["out_trade_no"] = refund.coding
             indict["out_refund_no"] = refund.mch_refund_id
             indict["total_fee"] = str(refund.fee_price)
-            indict["refund_fee"] = str(refund.price)
+            indict["refund_fee"] = str(efund.fee_price)
             indict["refund_fee_type"] = 'CNY'
 
             order = Order.objects.get(coding=refund.coding)
@@ -975,6 +980,16 @@ def refund_check(request):
                 apply = Apply.objects.get(order_id=order.id)
                 apply.state = 0
                 apply.save()
+
+                order.weixinuser.exit_activity(refund.fee_price)
+                apply.activity.weixinuser.activity_norevenue(refund.fee_price)
+                apply.activity.exit_ok(refund.fee_price)
+                order.activityfee.exit_ok()
+
+                msg = Msg(weixinuser=order.weixinuser)
+                msg.title = u"退款"
+                msg.content = u"你报名%s活动, 退款已经发起，2-3个工作日到帐。" %  apply.activity.name
+                msg.save()
             else:
                 # 退款失败
                 refund.state = 4

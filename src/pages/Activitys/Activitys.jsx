@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
+import './index.scss';
 
 @connect(state => ({
   ...state.activitys
@@ -29,6 +30,6 @@ export default class Activitys extends Component {
   }
 
   render() {
-    return <div>{this.props.children}</div>;
+    return <div className='view-act'>{this.props.children}</div>;
   }
 }

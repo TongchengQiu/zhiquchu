@@ -244,6 +244,39 @@ router.get('/apply/qrys', (req, res) => {
   }, 200);
 });
 
+router.get('/wechat/favorite', (req, res) => {
+  setTimeout(() => {
+    res.json({
+      retcode: 0,
+      retmsg: 'success',
+      data: {
+        data: [
+          { activity_id: "id1", activity_name: "name1", link_name: 'link_name', link_phone: 19810999082, fee_name: 'fee_name', fee_price: 123, apply_time: '2016-11-10', modify_time: '2016-11-11', state: 1, create_time: '2016-12-22', nickname: 'nickname' },
+          { activity_id: "id2", activity_name: "name2", link_name: 'link_name', link_phone: 19810999082, fee_name: 'fee_name', fee_price: 123, apply_time: '2016-11-11', modify_time: '2016-11-11', state: 0, create_time: '2016-12-22', nickname: 'nickname' },
+          { activity_id: "id3", activity_name: "name3", link_name: 'link_name', link_phone: 19810999082, fee_name: 'fee_name', fee_price: 123, apply_time: '2016-11-12', modify_time: '2016-11-11', state: 1, create_time: '2016-12-22', nickname: 'nickname' },
+          { activity_id: "id4", activity_name: "name4", link_name: 'link_name', link_phone: 19810999082, fee_name: 'fee_name', fee_price: 123, apply_time: '2016-11-13', modify_time: '2016-11-11', state: 0, create_time: '2016-12-22', nickname: 'nickname' },
+          { activity_id: "id5", activity_name: "name5", link_name: 'link_name', link_phone: 19810999082, fee_name: 'fee_name', fee_price: 123, apply_time: '2016-11-14', modify_time: '2016-11-11', state: 1, create_time: '2016-12-22', nickname: 'nickname' },
+          { activity_id: "id6", activity_name: "name6", link_name: 'link_name', link_phone: 19810999082, fee_name: 'fee_name', fee_price: 123, apply_time: '2016-11-15', modify_time: '2016-11-11', state: 0, create_time: '2016-12-22', nickname: 'nickname' },
+          { activity_id: "id7", activity_name: "name7", link_name: 'link_name', link_phone: 19810999082, fee_name: 'fee_name', fee_price: 123, apply_time: '2016-11-16', modify_time: '2016-11-11', state: 1, create_time: '2016-12-22', nickname: 'nickname' },
+          { activity_id: "id8", activity_name: "name8", link_name: 'link_name', link_phone: 19810999082, fee_name: 'fee_name', fee_price: 123, apply_time: '2016-11-17', modify_time: '2016-11-11', state: 0, create_time: '2016-12-22', nickname: 'nickname' },
+          { activity_id: "id9", activity_name: "name9", link_name: 'link_name', link_phone: 19810999082, fee_name: 'fee_name', fee_price: 123, apply_time: '2016-11-18', modify_time: '2016-11-11', state: 1, create_time: '2016-12-22', nickname: 'nickname' },
+          { activity_id: "id10", activity_name: "name10", link_name: 'link_name', link_phone: 19810999082, fee_name: 'fee_name', fee_price: 123, apply_time: '2016-11-19', modify_time: '2016-11-11', state: 0, create_time: '2016-12-22', nickname: 'nickname' },
+        ],
+        page: {
+          count: 100,
+          has_next: true,
+          num_pages: 1,
+          next_page_number: 2,
+          page_size: 10,
+          page_number: 1,
+          has_previous: true,
+          previous_page_number: 0
+        }
+      },
+    })
+  }, 200);
+});
+
 router.get('/wechat/stat', (req, res) => {
   setTimeout(() => {
     res.json({

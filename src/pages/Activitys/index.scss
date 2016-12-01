@@ -1,0 +1,25 @@
+.view-act {
+  .detail-box {
+    width: 500px;
+    margin: 1rem 1rem 0 0;
+    float: left;
+    ul {
+      li {
+        overflow: hidden;
+        font-size: 1rem;
+        padding-bottom: 1rem;
+        .til {
+          width: 80px;
+          float: left;
+        }
+        .cont {
+          width: 360px;
+          float: left;
+          img {
+            width: 300px;
+          }
+        }
+      }
+    }
+  }
+}
