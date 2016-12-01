@@ -20,13 +20,14 @@ const applyMeta = [{
   title: '报名时间',
   key: 'apply_time'
 }, {
-  title: '查看',
+  title: '查看用户信息',
   key: 'OPTIONS',
   render: (i, r) => <Button><Link to={`/users/list/${r.weixinuser_id}`}>查看</Link></Button>
 }];
 
 const DEFAULT_PROPSTYPES = {
   changeStarting: PropTypes.any,
+  getDetailStarting: PropTypes.any,
   detail: PropTypes.any,
   getDetail: PropTypes.func,
   changeObject: PropTypes.func,
@@ -181,7 +182,7 @@ export default class Detail extends Component {
   }
 
   renderDetail() {
-    const { detail } = this.props;
+    const { detail, getDetailStarting } = this.props;
     const pisozMeta = [{
       title: '票种名称',
       dataIndex: 'name',
@@ -215,7 +216,7 @@ export default class Detail extends Component {
             <li>
               <div className='til'>封面图片</div>
               <div className='cont'>
-                <img src={`http://wanmujia.com/${detail.pic_url}`} alt='封面图片' />
+                {detail.pic_url && <img src={`http://wanmujia.com/${detail.pic_url}`} alt='封面图片' />}
               </div>
             </li>
             <li>
@@ -248,7 +249,12 @@ export default class Detail extends Component {
             </li>
           </ul>
         </Card>
-        <Table dataSource={detail.data || []} columns={pisozMeta} style={{ width: '400px', float: 'left' }} />
+        <Table
+          dataSource={detail.data || []}
+          columns={pisozMeta}
+          style={{ width: '400px', float: 'left', marginTop: '16px' }}
+          loading={getDetailStarting}
+        />
       </div>
     );
   }
