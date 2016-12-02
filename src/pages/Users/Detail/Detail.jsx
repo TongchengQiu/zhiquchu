@@ -131,7 +131,8 @@ export default class Detail extends Component {
       key: 'apply_time'
     }, {
       title: '支付金额',
-      key: 'fee_price'
+      key: 'fee_price',
+      render: (i, r) => (r.fee_price ? r.fee_price / 100 : 0)
     }, {
       title: '查看活动',
       key: 'SUME_RECORD',
@@ -168,7 +169,8 @@ export default class Detail extends Component {
       render: (i, r) => (STATE_OPTIONS[r.state])
     }, {
       title: '赚得金额',
-      key: 'pay_fee'
+      key: 'pay_fee',
+      render: (i, r) => (r.pay_fee ? r.pay_fee / 100 : 0)
     }, {
       title: '查看活动',
       key: 'SUME_RECORD',
@@ -238,7 +240,7 @@ export default class Detail extends Component {
           <li>
             <div className='til'>头像</div>
             <div className='cont'>
-              <img src={`${userDetail.headimgurl}`} alt='头像' />
+              {userDetail.headimgurl && <img src={`${userDetail.headimgurl}`} alt='头像' />}
             </div>
           </li>
           <li>
@@ -259,16 +261,24 @@ export default class Detail extends Component {
           </li>
           <li>
             <div className='til'>总消费</div>
-            <div className='cont'>{userDetail.pay_fee}</div>
+            <div className='cont'>{userDetail.pay_fee ? userDetail.pay_fee / 100 : 0}</div>
           </li>
           <li>
             <div className='til'>总收入</div>
-            <div className='cont'>{userDetail.revenue_fee}</div>
+            <div className='cont'>{userDetail.revenue_fee ? userDetail.revenue_fee / 100 : 0}</div>
           </li>
         </ul>
-        <h1 className='t-title'>参与活动 总花费金额: ({userDetail.pay_fee})</h1>
+        <h1 className='t-title'>
+          参与活动 总花费金额: (
+          {userDetail.pay_fee ? userDetail.pay_fee / 100 : 0}
+          )
+        </h1>
         <Table {...this.getPartTableSettings()} />
-        <h1 className='t-title'>发布活动 总盈利: ({userDetail.revenue_fee})</h1>
+        <h1 className='t-title'>
+          发布活动 总盈利: (
+          {userDetail.revenue_fee ? userDetail.revenue_fee / 100 : 0}
+          )
+        </h1>
         <Table {...this.getPublishTableSettings()} />
         <h1 className='t-title'>收藏活动</h1>
         <Table {...this.getFavoTableSettings()} />

@@ -67,7 +67,8 @@ export default class Refund extends Component {
       key: 'fee_name'
     }, {
       title: '金额',
-      key: 'fee_price'
+      key: 'fee_price',
+      render: (i, r) => (r.fee_price ? r.fee_price / 100 : 0)
     }, {
       title: '当前状态',
       key: 'state',
@@ -76,7 +77,7 @@ export default class Refund extends Component {
       render: text => (filterState[text]),
     }, {
       title: '退票时间',
-      key: 'date'
+      key: 'refund_time'
     }, {
       title: '操作',
       key: 'OPTIONS',

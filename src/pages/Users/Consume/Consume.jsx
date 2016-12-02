@@ -32,7 +32,7 @@ const DEFAULT_PROPSTYPES = {
 };
 
 @connect(state => ({
-  ...state.activitys
+  ...state.users
 }), {
   getPayList,
   getRefundList
@@ -49,7 +49,7 @@ export default class Consume extends Component {
     const { getPayListStarting, getPayListDone, getPayListError, payList, payPage } = this.props;
     const meta = [{
       title: '日期',
-      key: 'date'
+      key: 'create_time'
     }, {
       title: '活动名称',
       key: 'activity_name'
@@ -58,7 +58,8 @@ export default class Consume extends Component {
       key: 'fee_name'
     }, {
       title: '花费金额',
-      key: 'fee_price'
+      key: 'fee_price',
+      render: (i, r) => (r.fee_price ? r.fee_price / 100 : 0)
     }, {
       title: '查看活动',
       key: 'SHOW_ACTIVITY',
@@ -88,16 +89,23 @@ export default class Consume extends Component {
     } = this.props;
     const meta = [{
       title: '日期',
-      key: 'date'
+      key: 'create_time'
     }, {
       title: '活动名称',
       key: 'activity_name'
+    }, {
+      title: '报名名字',
+      key: 'link_name'
+    }, {
+      title: '报名电话',
+      key: 'link_phone'
     }, {
       title: '所选票种',
       key: 'fee_name'
     }, {
       title: '退款金额',
-      key: 'fee_price'
+      key: 'fee_price',
+      render: (i, r) => (r.fee_price ? r.fee_price / 100 : 0)
     }, {
       title: '状态',
       key: 'state',

@@ -55,7 +55,8 @@ export default class Detail extends Component {
       key: 'fee_name'
     }, {
       title: '花费金额',
-      key: 'fee_price'
+      key: 'fee_price',
+      render: (i, r) => (r.fee_price ? r.fee_price / 100 : 0)
     }, {
       title: '查看活动',
       key: 'SHOW_ACTIVITY',
@@ -73,7 +74,7 @@ export default class Detail extends Component {
         date: this.props.params.id
       },
       key: 'pay',
-      title: `${this.props.params.id}花费记录`,
+      title: `${this.props.params.id} 花费记录`,
       needReload: true,
       pageSize: 10,
     };
@@ -98,7 +99,8 @@ export default class Detail extends Component {
       key: 'fee_name'
     }, {
       title: '退款金额',
-      key: 'fee_price'
+      key: 'fee_price',
+      render: (i, r) => (r.fee_price ? r.fee_price / 100 : 0)
     }, {
       title: '查看活动',
       key: 'SHOW_ACTIVITY',
@@ -117,7 +119,7 @@ export default class Detail extends Component {
         state: 3
       },
       key: 'refund',
-      title: `${this.props.params.id}退款成功记录`,
+      title: `${this.props.params.id} 退款成功记录`,
       needReload: true,
       pageSize: 10,
     };

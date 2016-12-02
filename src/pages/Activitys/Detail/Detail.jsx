@@ -191,8 +191,9 @@ export default class Detail extends Component {
       title: '票价',
       dataIndex: 'price',
       key: 'price',
+      render: (i, r) => (r.price ? r.price / 100 : 0)
     }, {
-      title: '报名／限报',
+      title: '报名 / 限报',
       dataIndex: 't',
       key: 't',
       render: (i, r) => (`${r.apply_num}/${r.num}`)
@@ -200,6 +201,7 @@ export default class Detail extends Component {
       title: '收入',
       dataIndex: 'apply_price',
       key: 'apply_price',
+      render: (i, r) => (r.apply_price ? r.apply_price / 100 : 0)
     }];
     return (
       <div className='clearfix'>

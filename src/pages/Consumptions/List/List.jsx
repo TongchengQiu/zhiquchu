@@ -42,13 +42,16 @@ export default class List extends Component {
       key: 'date'
     }, {
       title: '进账',
-      key: 'pay_fee'
+      key: 'pay_fee',
+      render: (i, r) => (r.pay_fee ? r.pay_fee / 100 : 0)
     }, {
       title: '出账（退款）',
-      key: 'refund_fee'
+      key: 'refund_fee',
+      render: (i, r) => (r.refund_fee ? r.refund_fee / 100 : 0)
     }, {
       title: '净利',
-      key: 'balance_fee'
+      key: 'balance_fee',
+      render: (i, r) => (r.balance_fee ? r.balance_fee / 100 : 0)
     }, {
       title: '查看详情',
       key: 'OPTIONS',
@@ -76,11 +79,17 @@ export default class List extends Component {
       key: 'balance_fee',
       title: '净利'
     }];
+    const newStat = {};
+    if (this.props.stat) {
+      Object.keys(this.props.stat).forEach(
+        key => (newStat[key] = (this.props.stat[key] ? this.props.stat[key] / 100 : 0))
+      );
+    }
     return (
       <div>
         {this.props.children ? this.props.children : (
           <div>
-            <StatBox data={this.props.stat} meta={meta} />
+            <StatBox data={newStat} meta={meta} />
             <Table {...this.getTableSettings()} />
           </div>
         )}
