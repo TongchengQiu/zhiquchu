@@ -16,6 +16,16 @@ const LSTATE_OPTIONS = {
   1: '有效',
 };
 
+const filterStateArr = Object.keys(STATE_OPTIONS).map(key => ({
+  text: STATE_OPTIONS[key],
+  value: key
+}));
+
+const filterLStateArr = Object.keys(LSTATE_OPTIONS).map(key => ({
+  text: LSTATE_OPTIONS[key],
+  value: key
+}));
+
 const DEFAULT_PROPSTYPES = {
   getRList: PropTypes.func,
   getRListStarting: PropTypes.bool,
@@ -116,10 +126,14 @@ export default class List extends Component {
     }, {
       title: '当前状态',
       key: 'state',
+      filters: filterStateArr,
+      filterMultiple: false,
       render: (i, row) => STATE_OPTIONS[row.state]
     }, {
       title: '有效情况',
       key: 'lstate',
+      filters: filterLStateArr,
+      filterMultiple: false,
       render: (i, row) => LSTATE_OPTIONS[row.lstate]
     }, {
       title: '操作',

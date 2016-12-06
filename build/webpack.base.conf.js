@@ -1,7 +1,7 @@
 var webpack = require('webpack')
 var path = require('path')
-var config = require('../config')
 var projectRoot = path.resolve(__dirname, '../')
+var config = require('../config')
 
 var globals = {
   'NODE_ENV'     : process.env.NODE_ENV,
